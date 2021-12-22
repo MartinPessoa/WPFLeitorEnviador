@@ -1,0 +1,59 @@
+﻿<Window x:Class="WPFLeitorEnviador.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFLeitorEnviador"
+        mc:Ignorable="d"
+        Title="Leitor Odds" Height="349" Width="542"
+        x:Name="_this">
+
+    <Grid Margin="50">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.ColumnSpan="3" Grid.Row="0" >Escolha a pasta que contém os arquivos:</TextBlock>
+        <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonte" Grid.Row="1" Grid.Column="0">Escolher Pasta Fonte...</Button>
+
+        <TextBlock Grid.ColumnSpan="3" Grid.Row="3">Escolha a pasta onde será salvo os arquivos "Limpos":</TextBlock>
+        <Button Click="btnPastaDestino_Click" x:Name="btnPastaDestino" Grid.Row="4">Escolher Pasta Destino...</Button>
+
+
+        <TextBlock Grid.Row="6" Grid.ColumnSpan="3" >
+            <TextBlock.Text>
+                <Binding ElementName="_this" Path="PastaFonte" />
+            </TextBlock.Text>
+        </TextBlock>
+
+        <TextBlock Grid.Row="7" Grid.ColumnSpan="3" >
+            <TextBlock.Text>
+                <Binding ElementName="_this" Path="PastaDestino" />
+            </TextBlock.Text>
+        </TextBlock>
+        
+
+        <Button Click="btnStart_Click" x:Name="btnStart" Grid.Row="9" Grid.Column="2">Começar</Button>
+
+        <TextBlock Grid.Row="10" Grid.ColumnSpan="3" >
+            <TextBlock.Text>
+                <Binding ElementName="_this" Path="Status" />
+            </TextBlock.Text>
+        </TextBlock>
+    </Grid>
+</Window>
