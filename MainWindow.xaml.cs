@@ -116,7 +116,7 @@ namespace WPFLeitorEnviador
 
         private async void btnStart_Click(object sender, RoutedEventArgs e)
         {
-            CSVWriter writer = new(this.PastaDestino);
+            CSVWriter writer = new(this.PastaDestino, InformarStatus);
             CSVReader reader = new(this.PastaFonte, writer, "TESTE",InformarStatus);
 
             var odds = await reader.Read();
