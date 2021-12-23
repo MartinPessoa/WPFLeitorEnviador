@@ -4,37 +4,43 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using WPFLeitorEnviador.Domain;
 using WPFLeitorEnviador.Services.DTO;
 
 namespace WPFLeitorEnviador.Services
 {
-    internal class OddCSVReaderBase1
+    internal class CSVReader
     {
-        protected readonly string _pasta;
-        protected readonly string _CSVSearchPattern = "*.csv";
+        private readonly string _pasta;
+        private readonly string _CSVSearchPattern = "*.csv";
 
-        protected IProgress<string>? _informarResultado;
-
-        protected IGenericEntityListProcessor _oddProccessor;
-        protected List<IEntityBase> _itensGerando = new List<IEntityBase>();
+        private IProgress<string>?_informarResultado;
+        
+        private OddListProcessor _oddProcessor;
+        private List<Odd> _oddsGerando = new List<Odd>();
         public string Campeonato { get; private set; }
-
-        protected OddCSVReaderBase1(string pasta, string campeonato, IGenericEntityListProcessor processor, IProgress<string>? progress = null)
+        public CSVReader(string pasta, string campeonato, IProgress<string> progress = null)
         {
-            _pasta = pasta;
-            Campeonato = campeonato;
-            _informarResultado = progress;
-            _oddProccessor = processor;
+            this._pasta = pasta;    
+            this._informarResultado = progress;
+            this.Campeonato = campeonato;
+
+            _oddProcessor = new OddListProcessor(this.Campeonato);
         }
 
-        protected virtual List<IEntityBase> GerarItens()
+        ~CSVReader()
         {
-            return _oddProccessor.GetItems();
+            _informarResultado = null;
         }
 
-        public List<IEntityBase> Read()
+        private string[] GetListaArquivos(string PastaOrigem)
+        {
+            return Directory.GetFiles(PastaOrigem, this._CSVSearchPattern, System.IO.SearchOption.TopDirectoryOnly);
+        }
+
+        public List<Odd> Read()
         {
             //Encontrar Arquivo
             var filename = GetListaArquivos(this._pasta);
@@ -45,9 +51,9 @@ namespace WPFLeitorEnviador.Services
             Debug.WriteLine("Lendo da Pasta: " + this._pasta);
             Debug.WriteLine("Primeiro Arquivo Encontrado: " + String.Join(" - ", filename));
 
-            if (!GuardTemPastaEArquivos(filename)) return null;
+            if ( !GuardTemPastaEArquivos(filename) ) return null;
 
-            InformarProgresso("Encontramos " + qtdArquivos.ToString() + " arquivo(s). Começando a Leitura...");
+            InformarProgresso("Encontramos "+ qtdArquivos.ToString() + " arquivo(s). Começando a Leitura...");
             try
             {
                 //Ler
@@ -56,32 +62,25 @@ namespace WPFLeitorEnviador.Services
                     arquivoAtual++;
                     InformarProgresso("Lendo arquivo " + arquivoAtual.ToString() + " de " + qtdArquivos.ToString() + " arquivo(s).");
                     this.Ler(arquivo).Wait();
-                    this._itensGerando.AddRange(GerarItens());
-                    _oddProccessor = new OddListProcessor(this.Campeonato);
+                    this._oddsGerando.AddRange(GerarItens());
+                    _oddProcessor = new OddListProcessor(this.Campeonato);
                 }
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
-                Debug.WriteLine(ex.ToString());
+                Debug.WriteLine(ex.ToString()); 
             }
-
-
+    
+            
 
             InformarProgresso("Leitura da Pasta Finalizada.");
             //string lido = "";
 
-            return _itensGerando.Distinct().OrderBy(o => o.Data).ToList();
+            return _oddsGerando.Distinct().OrderBy(o => o.Data).ToList();
         }
 
-        private async Task<bool> CompararComÚltimaDataLida(DateTime data)
+        private List<Odd> GerarItens()
         {
-            // TODO: Comparar com ultima data gravada....
-            return await Task.Run(() => { return true; });
-        }
-
-        private string[] GetListaArquivos(string PastaOrigem)
-        {
-            return Directory.GetFiles(PastaOrigem, this._CSVSearchPattern, System.IO.SearchOption.TopDirectoryOnly);
+            return _oddProcessor.GetOdds();
         }
 
         private bool GuardTemPastaEArquivos(string[] listaArquivos)
@@ -89,7 +88,7 @@ namespace WPFLeitorEnviador.Services
             if (listaArquivos == null)
             {
                 InformarProgresso("Pasta não encontrada.");
-                return false;
+                return false; 
             }
 
             if (listaArquivos.Length < 1)
@@ -99,16 +98,6 @@ namespace WPFLeitorEnviador.Services
             }
 
             return true;
-        }
-
-        private void InformarProgresso(string Mensagem)
-        {
-            if (this._informarResultado == null)
-            {
-                return;
-            }
-            Debug.WriteLine("Informando: " + Mensagem);
-            _informarResultado.Report($"Leitor {Campeonato}: {Mensagem}");
         }
 
         private async Task Ler(string filename)
@@ -128,7 +117,7 @@ namespace WPFLeitorEnviador.Services
                         {
                             continue;
                         }
-
+                        
                         // pegar a data
                         var data = DateTimeConverterModel.Converter(fields[0]);
 
@@ -142,12 +131,12 @@ namespace WPFLeitorEnviador.Services
                             return;
                         }
 
-                        _oddProccessor.ProcessarLinha(fields[1].Split(" "), data);
+                        _oddProcessor.ProcessarLinha(fields[1].Split(" "), data);
 
 
                         Debug.WriteLine(fields[1]);
                     }
-
+      
                 }
             });
             try
@@ -163,15 +152,32 @@ namespace WPFLeitorEnviador.Services
                     DirectoryInfo di = Directory.CreateDirectory(destinoSemArquivo);
                 }
 
-
+                
                 //mover o arquivo lido pra pasta backup
-                File.Move(filename, destinoComArquivo, true);
-            }
-            catch (Exception ex)
+                File.Move(filename, destinoComArquivo,true);
+            } catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
             }
 
+        } 
+
+        private async Task<bool> CompararComÚltimaDataLida(DateTime data)
+        {
+            // TODO: Comparar com ultima data gravada....
+            return await Task.Run(() => { return true; });
+        }
+
+        private void InformarProgresso(string Mensagem)
+        {
+            if(this._informarResultado == null)
+            {
+                return ;
+            }
+            Debug.WriteLine("Informando: " + Mensagem);
+            _informarResultado.Report($"Leitor {Campeonato}: {Mensagem}");
         }
     }
+
+
 }

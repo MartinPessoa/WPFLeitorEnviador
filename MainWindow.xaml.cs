@@ -216,28 +216,28 @@ namespace WPFLeitorEnviador
                 await Task.Factory.StartNew(async () =>
                 {
                     Debug.WriteLine("Thread funcionando");
-                    var readers = new List<OddCSVReader>();
+                    var readers = new List<CSVReader>();
                     CSVWriter writer = new(pastaDestino, progress);
 
                     if (pastaCopa != "")
                     {
-                        readers.Add(new OddCSVReader(pastaCopa, "COPA", progress));
+                        readers.Add(new CSVReader(pastaCopa, "COPA", progress));
                     }
 
                     if (pastaEuro != "")
                     {
-                        readers.Add(new OddCSVReader(pastaEuro, "EURO", progress1));
+                        readers.Add(new CSVReader(pastaEuro, "EURO", progress1));
                     }
 
 
                     if (pastaPremier != "")
                     {
-                        readers.Add(new OddCSVReader(pastaPremier, "PREMIER", progress2));
+                        readers.Add(new CSVReader(pastaPremier, "PREMIER", progress2));
                     }
 
                     if (pastaSuper != "")
                     {
-                        readers.Add(new OddCSVReader(pastaSuper, "SUPER", progress3));
+                        readers.Add(new CSVReader(pastaSuper, "SUPER", progress3));
                     }
 
                     while (true)
@@ -251,7 +251,7 @@ namespace WPFLeitorEnviador
 
 
                         var listaOdds = new List<List<Odd>>();
-                        foreach (OddCSVReader reader in readers)
+                        foreach (CSVReader reader in readers)
                         {
                             //CallbackStatus("Iniciando " + reader.Campeonato);
                             var odds = reader.Read();
