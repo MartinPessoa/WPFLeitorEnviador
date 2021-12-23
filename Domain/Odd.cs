@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WPFLeitorEnviador.Domain
 {
-    internal class Odd : IEquatable<Odd>
+    internal class Odd : IEquatable<Odd>, IEntityBase
     {
         public string Campeonato { get; }
 
