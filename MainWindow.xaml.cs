@@ -49,6 +49,9 @@ namespace WPFLeitorEnviador
         public static readonly DependencyProperty StatusProperty =
             DependencyProperty.Register("Status", typeof(string), typeof(MainWindow), new UIPropertyMetadata(string.Empty));
 
+        public static readonly DependencyProperty StatusResultadosProperty =
+            DependencyProperty.Register("StatusResultados", typeof(string), typeof(MainWindow), new UIPropertyMetadata(string.Empty));
+
         public string PastaEuroFonte 
         {
             get { return (string)this.GetValue(PastaEuroFonteProperty); }
@@ -89,6 +92,11 @@ namespace WPFLeitorEnviador
             set { this.SetValue(StatusProperty, value); }
         }
 
+        public string StatusResultados
+        {
+            get { return (string)this.GetValue(StatusResultadosProperty); }
+            set { this.SetValue(StatusResultadosProperty, value); }
+        }
 
         public MainWindow()
         {
@@ -213,23 +221,23 @@ namespace WPFLeitorEnviador
 
                     if (pastaCopa != "")
                     {
-                        readers.Add(new CSVReader(pastaCopa, writer, "COPA", progress));
+                        readers.Add(new CSVReader(pastaCopa, "COPA", progress));
                     }
 
                     if (pastaEuro != "")
                     {
-                        readers.Add(new CSVReader(pastaEuro, writer, "EURO", progress1));
+                        readers.Add(new CSVReader(pastaEuro, "EURO", progress1));
                     }
 
 
                     if (pastaPremier != "")
                     {
-                        readers.Add(new CSVReader(pastaPremier, writer, "PREMIER", progress2));
+                        readers.Add(new CSVReader(pastaPremier, "PREMIER", progress2));
                     }
 
                     if (pastaSuper != "")
                     {
-                        readers.Add(new CSVReader(pastaSuper, writer, "SUPER", progress3));
+                        readers.Add(new CSVReader(pastaSuper, "SUPER", progress3));
                     }
 
                     while (true)
@@ -264,44 +272,17 @@ namespace WPFLeitorEnviador
                             Thread.Sleep(150);
                         }
 
+                        for(int i = 5;i>0;i--)
+                        {
+                            if (cancelToken.IsCancellationRequested)
+                            {
+                                informarParada.Report("Cancelada Leitura de Odds.");
+                                return;
+                            }
 
-                        if (cancelToken.IsCancellationRequested)
-                        {
-                            informarParada.Report("Cancelada Leitura de Odds.");
-                            break;
+                            progress.Report($"Escrita finalizada. Aguardando {10*i} segundos...");
+                            Thread.Sleep(1000 * 10);
                         }
-
-                        progress.Report("Escrita finalizada. Aguardando 50 segundos...");
-                        Thread.Sleep(1000 * 10);
-                        if (cancelToken.IsCancellationRequested)
-                        {
-                            informarParada.Report("Cancelada Leitura de Odds.");
-                            break;
-                        }
-                        progress.Report("Escrita finalizada. Aguardando 40 segundos...");
-                        Thread.Sleep(1000 * 10);
-                        if (cancelToken.IsCancellationRequested)
-                        {
-                            informarParada.Report("Cancelada Leitura de Odds.");
-                            break;
-                        }
-                        progress.Report("Escrita finalizada. Aguardando 30 segundos...");
-                        Thread.Sleep(1000 * 10);
-                        if (cancelToken.IsCancellationRequested)
-                        {
-                            informarParada.Report("Cancelada Leitura de Odds.");
-                            break;
-                        }
-                        progress.Report("Escrita finalizada. Aguardando 20 segundos...");
-                        Thread.Sleep(1000 * 10);
-                        if (cancelToken.IsCancellationRequested)
-                        {
-                            informarParada.Report("Cancelada Leitura de Odds.");
-                            break;
-                        }
-                        progress.Report("Escrita finalizada. Aguardando 10 segundos...");
-                        Thread.Sleep(1000 * 10);
-
 
                         progress.Report("Reiniciando leitura...");
                     }

@@ -5,84 +5,228 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFLeitorEnviador"
         mc:Ignorable="d"
-        Title="Leitor Odds" Height="379" Width="930"
+        Title="Leitor Odds" Height="892" Width="972"
         x:Name="_this">
 
-    <Grid Margin="50">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="35"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="35"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="35"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <TextBlock Grid.ColumnSpan="3" Grid.Row="0" >Pasta Fonte Euro:</TextBlock>
-        <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonteEuro" Grid.Row="1" Grid.Column="0">Escolher Pasta EURO...</Button>
-
-        <TextBlock Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="2">Pasta Fonte Copa:</TextBlock>
-        <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonteCopa" Grid.Row="1" Grid.Column="2">Escolher Pasta COPA...</Button>
-
-        <TextBlock Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="4">Pasta Fonte Premier:</TextBlock>
-        <Button Click="btnPastaFonte_Click" x:Name="btnPastaFontePremier" Grid.Row="1" Grid.Column="4">Escolher Pasta PREMIER...</Button>
-
-        <TextBlock Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="6">Pasta Fonte Euro:</TextBlock>
-        <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonteSuper" Grid.Row="1" Grid.Column="6">Escolher Pasta SUPER...</Button>
-
-        <TextBlock Grid.ColumnSpan="7" Grid.Row="3" TextWrapping="WrapWithOverflow">Escolha a pasta onde será salvo os arquivos "Limpos" (Dentro dela, será criado pastas para cada campeonato):</TextBlock>
-        <Button Click="BtnPastaDestino_Click" x:Name="btnPastaDestino" Grid.Row="4">Escolher Pasta Destino...</Button>
 
 
-        <TextBlock Grid.Row="6" Grid.ColumnSpan="3" >
-            <TextBlock.Text>
-                <Binding ElementName="_this" Path="PastaEuroFonte" />
-            </TextBlock.Text>
-        </TextBlock>
-        <TextBlock Grid.Row="6" Grid.ColumnSpan="3" Grid.Column="4">
-            <TextBlock.Text>
-                <Binding ElementName="_this" Path="PastaCopaFonte" />
-            </TextBlock.Text>
-        </TextBlock>
-        <TextBlock Grid.Row="7" Grid.ColumnSpan="3" >
-            <TextBlock.Text>
-                <Binding ElementName="_this" Path="PastaPremierFonte" />
-            </TextBlock.Text>
-        </TextBlock>
-        <TextBlock Grid.Row="7" Grid.ColumnSpan="3" Grid.Column="4">
-            <TextBlock.Text>
-                <Binding ElementName="_this" Path="PastaSuperFonte" />
-            </TextBlock.Text>
-        </TextBlock>
+    <DockPanel Margin="10">
+        <GroupBox  Margin="10" DockPanel.Dock="Top" Header="ODDS:" >
+            <Grid   Background="LightGray" >
 
-        <TextBlock Grid.Row="8" Grid.ColumnSpan="3" >
-            <TextBlock.Text>
-                <Binding ElementName="_this" Path="PastaDestino" />
-            </TextBlock.Text>
-        </TextBlock>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="35"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="35"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="35"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="20"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="20"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" >Pasta Fonte Euro:</TextBlock>
+                <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonteEuro" Grid.Row="2" Grid.Column="1">Escolher Pasta EURO...</Button>
+
+                <TextBlock Grid.ColumnSpan="3" Grid.Row="1" Grid.Column="3">Pasta Fonte Copa:</TextBlock>
+                <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonteCopa" Grid.Row="2" Grid.Column="3">Escolher Pasta COPA...</Button>
+
+                <TextBlock Grid.ColumnSpan="3" Grid.Row="1" Grid.Column="5">Pasta Fonte Premier:</TextBlock>
+                <Button Click="btnPastaFonte_Click" x:Name="btnPastaFontePremier" Grid.Row="2" Grid.Column="5">Escolher Pasta PREMIER...</Button>
+
+                <TextBlock Grid.ColumnSpan="3" Grid.Row="1" Grid.Column="7">Pasta Fonte Euro:</TextBlock>
+                <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonteSuper" Grid.Row="2" Grid.Column="7">Escolher Pasta SUPER...</Button>
+
+                <TextBlock Grid.Column="1" Grid.ColumnSpan="7" Grid.Row="4" TextWrapping="WrapWithOverflow">Escolha a pasta onde será salvo os arquivos "Limpos" (Dentro dela, será criado pastas para cada campeonato):</TextBlock>
+                <Button Grid.Column="1" Click="BtnPastaDestino_Click" x:Name="btnPastaDestino" Grid.Row="5">Escolher Pasta Destino...</Button>
 
 
-        <Button Click="BtnStart_Click" x:Name="btnStart" Grid.Row="9" Grid.Column="4">Começar</Button>
-        <Button Click="BtnStop_Click" x:Name="btnStop" Grid.Row="9" Grid.Column="6" IsEnabled="false">Parar</Button>
+                <TextBlock Grid.Column="1" Grid.Row="7" Grid.ColumnSpan="3" >
+                    <TextBlock.Text>
+                        <Binding ElementName="_this" Path="PastaEuroFonte" FallbackValue="(nenhum pasta selecionada)"/>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Grid.Row="7" Grid.ColumnSpan="3" Grid.Column="3">
+                    <TextBlock.Text>
+                        <Binding ElementName="_this" Path="PastaCopaFonte" FallbackValue="(nenhum pasta selecionada)"/>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Grid.Column="5" Grid.Row="7" Grid.ColumnSpan="3" >
+                    <TextBlock.Text>
+                        <Binding ElementName="_this" Path="PastaPremierFonte" FallbackValue="(nenhum pasta selecionada)"/>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Grid.Row="7" Grid.ColumnSpan="3" Grid.Column="7">
+                    <TextBlock.Text>
+                        <Binding ElementName="_this" Path="PastaSuperFonte" FallbackValue="(nenhum pasta selecionada)"/>
+                    </TextBlock.Text>
+                </TextBlock>
 
-        <TextBlock Grid.Row="10" Grid.ColumnSpan="6" >
-            <TextBlock.Text>
-                <Binding ElementName="_this" Path="Status" />
-            </TextBlock.Text>
-        </TextBlock>
-    </Grid>
+                <TextBlock Grid.Column="1" Grid.Row="9" Grid.ColumnSpan="3" >
+                    <TextBlock.Text>
+                        <Binding ElementName="_this" Path="PastaDestino" FallbackValue="(nenhum pasta selecionada)"/>
+                    </TextBlock.Text>
+                </TextBlock>
+
+
+                <Button Click="BtnStart_Click" x:Name="btnStart" Grid.Row="10" Grid.Column="5">Começar</Button>
+                <Button Click="BtnStop_Click" x:Name="btnStop" Grid.Row="10" Grid.Column="7" IsEnabled="false">Parar</Button>
+
+
+
+
+            </Grid>
+
+        </GroupBox>
+
+        <GroupBox  Margin="10" DockPanel.Dock="Top" VerticalAlignment="Center"  Header="RESULTADOS:" >
+            <Grid   Background="LightGray" >
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="35"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="35"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="35"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="20"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="20"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" >Pasta Fonte Euro:</TextBlock>
+                <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonteResultadosEuro" Grid.Row="2" Grid.Column="1">Escolher Pasta EURO...</Button>
+
+                <TextBlock Grid.ColumnSpan="3" Grid.Row="1" Grid.Column="3">Pasta Fonte Copa:</TextBlock>
+                <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonteResultadosCopa" Grid.Row="2" Grid.Column="3">Escolher Pasta COPA...</Button>
+
+                <TextBlock Grid.ColumnSpan="3" Grid.Row="1" Grid.Column="5">Pasta Fonte Premier:</TextBlock>
+                <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonteResultadosPremier" Grid.Row="2" Grid.Column="5">Escolher Pasta PREMIER...</Button>
+
+                <TextBlock Grid.ColumnSpan="3" Grid.Row="1" Grid.Column="7">Pasta Fonte Euro:</TextBlock>
+                <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonteResultadosSuper" Grid.Row="2" Grid.Column="7">Escolher Pasta SUPER...</Button>
+
+                <TextBlock Grid.Column="1" Grid.ColumnSpan="7" Grid.Row="4" TextWrapping="WrapWithOverflow">Escolha a pasta onde será salvo os arquivos "Limpos" (Dentro dela, será criado pastas para cada campeonato):</TextBlock>
+                <Button Grid.Column="1" Click="BtnPastaDestino_Click" x:Name="btnPastaResultadosDestino" Grid.Row="5">Escolher Pasta Destino...</Button>
+
+
+                <TextBlock Grid.Column="1" Grid.Row="7" Grid.ColumnSpan="3" >
+                    <TextBlock.Text>
+                        <Binding ElementName="_this" Path="PastaEuroFonte" FallbackValue="(nenhum asta selecionada)"/>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Grid.Row="7" Grid.ColumnSpan="3" Grid.Column="5">
+                    <TextBlock.Text>
+                        <Binding ElementName="_this" Path="PastaCopaFonte" FallbackValue="(nenhum asta selecionada)"/>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="8" Grid.ColumnSpan="3" >
+                    <TextBlock.Text>
+                        <Binding ElementName="_this" Path="PastaPremierFonte" FallbackValue="(nenhum asta selecionada)"/>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Grid.Row="8" Grid.ColumnSpan="3" Grid.Column="5">
+                    <TextBlock.Text>
+                        <Binding ElementName="_this" Path="PastaSuperFonte" FallbackValue="(nenhum asta selecionada)"/>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <TextBlock Grid.Column="1" Grid.Row="9" Grid.ColumnSpan="3" >
+                    <TextBlock.Text>
+                        <Binding ElementName="_this" Path="PastaDestino" FallbackValue="(nenhum asta selecionada)"/>
+                    </TextBlock.Text>
+                </TextBlock>
+
+
+                <Button Click="BtnStart_Click" x:Name="btnStartResultados" Grid.Row="10" Grid.Column="5">Começar</Button>
+                <Button Click="BtnStop_Click" x:Name="btnStopResultados" Grid.Row="10" Grid.Column="7" IsEnabled="false">Parar</Button>
+
+
+
+
+            </Grid>
+        </GroupBox>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <StatusBar Background="Beige"  VerticalAlignment="Bottom" BorderBrush="LightSlateGray" BorderThickness="1" >
+            <StatusBarItem>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="Processador de ODD:"></Label>
+                    <TextBlock  Grid.Row="1">
+                        <TextBlock.Text>
+                            <Binding ElementName="_this" Path="Status" />
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Grid>
+
+
+            </StatusBarItem>
+            <Separator/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Label Content="Processador de RESULTADOS:"></Label>
+                <TextBlock    Grid.Row="1">
+                    <TextBlock.Text>
+                        <Binding ElementName="_this" Path="StatusResultados" />
+                    </TextBlock.Text>
+                </TextBlock>
+
+
+            </Grid>
+
+        </StatusBar>
+    </DockPanel>
+
+
 </Window>
