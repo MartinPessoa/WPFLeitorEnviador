@@ -17,7 +17,6 @@ namespace WPFLeitorEnviador.Services.DTO
         public static DateTime Converter(string stringData)
         {
             // "2021-12-20 01:14:26"
-
             var splits = stringData.Split(' ');
 
             int[] data = Array.Empty<int>();
@@ -31,8 +30,6 @@ namespace WPFLeitorEnviador.Services.DTO
             {
                 throw new Exception("Não foi possível converter em Data: " + stringData, ex);
             }
-
-
 
             return new DateTime(data[0], data[1], data[2], horas[0], horas[1], horas[2]);
         }
@@ -50,7 +47,6 @@ namespace WPFLeitorEnviador.Services.DTO
 
                 retorno = retorno.Append(convertido);
             }
-
             return retorno;
         }
 

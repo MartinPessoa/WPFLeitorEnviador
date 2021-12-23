@@ -5,13 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFLeitorEnviador"
         mc:Ignorable="d"
-        Title="Leitor Odds" Height="349" Width="542"
+        Title="Leitor Odds" Height="379" Width="930"
         x:Name="_this">
 
     <Grid Margin="50">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="35"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="35"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="35"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -28,29 +32,54 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.ColumnSpan="3" Grid.Row="0" >Escolha a pasta que contém os arquivos:</TextBlock>
-        <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonte" Grid.Row="1" Grid.Column="0">Escolher Pasta Fonte...</Button>
+        <TextBlock Grid.ColumnSpan="3" Grid.Row="0" >Pasta Fonte Euro:</TextBlock>
+        <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonteEuro" Grid.Row="1" Grid.Column="0">Escolher Pasta EURO...</Button>
 
-        <TextBlock Grid.ColumnSpan="3" Grid.Row="3">Escolha a pasta onde será salvo os arquivos "Limpos":</TextBlock>
-        <Button Click="btnPastaDestino_Click" x:Name="btnPastaDestino" Grid.Row="4">Escolher Pasta Destino...</Button>
+        <TextBlock Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="2">Pasta Fonte Copa:</TextBlock>
+        <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonteCopa" Grid.Row="1" Grid.Column="2">Escolher Pasta COPA...</Button>
+
+        <TextBlock Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="4">Pasta Fonte Premier:</TextBlock>
+        <Button Click="btnPastaFonte_Click" x:Name="btnPastaFontePremier" Grid.Row="1" Grid.Column="4">Escolher Pasta PREMIER...</Button>
+
+        <TextBlock Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="6">Pasta Fonte Euro:</TextBlock>
+        <Button Click="btnPastaFonte_Click" x:Name="btnPastaFonteSuper" Grid.Row="1" Grid.Column="6">Escolher Pasta SUPER...</Button>
+
+        <TextBlock Grid.ColumnSpan="7" Grid.Row="3" TextWrapping="WrapWithOverflow">Escolha a pasta onde será salvo os arquivos "Limpos" (Dentro dela, será criado pastas para cada campeonato):</TextBlock>
+        <Button Click="BtnPastaDestino_Click" x:Name="btnPastaDestino" Grid.Row="4">Escolher Pasta Destino...</Button>
 
 
         <TextBlock Grid.Row="6" Grid.ColumnSpan="3" >
             <TextBlock.Text>
-                <Binding ElementName="_this" Path="PastaFonte" />
+                <Binding ElementName="_this" Path="PastaEuroFonte" />
+            </TextBlock.Text>
+        </TextBlock>
+        <TextBlock Grid.Row="6" Grid.ColumnSpan="3" Grid.Column="4">
+            <TextBlock.Text>
+                <Binding ElementName="_this" Path="PastaCopaFonte" />
+            </TextBlock.Text>
+        </TextBlock>
+        <TextBlock Grid.Row="7" Grid.ColumnSpan="3" >
+            <TextBlock.Text>
+                <Binding ElementName="_this" Path="PastaPremierFonte" />
+            </TextBlock.Text>
+        </TextBlock>
+        <TextBlock Grid.Row="7" Grid.ColumnSpan="3" Grid.Column="4">
+            <TextBlock.Text>
+                <Binding ElementName="_this" Path="PastaSuperFonte" />
             </TextBlock.Text>
         </TextBlock>
 
-        <TextBlock Grid.Row="7" Grid.ColumnSpan="3" >
+        <TextBlock Grid.Row="8" Grid.ColumnSpan="3" >
             <TextBlock.Text>
                 <Binding ElementName="_this" Path="PastaDestino" />
             </TextBlock.Text>
         </TextBlock>
-        
 
-        <Button Click="btnStart_Click" x:Name="btnStart" Grid.Row="9" Grid.Column="2">Começar</Button>
 
-        <TextBlock Grid.Row="10" Grid.ColumnSpan="3" >
+        <Button Click="BtnStart_Click" x:Name="btnStart" Grid.Row="9" Grid.Column="4">Começar</Button>
+        <Button Click="BtnStop_Click" x:Name="btnStop" Grid.Row="9" Grid.Column="6" IsEnabled="false">Parar</Button>
+
+        <TextBlock Grid.Row="10" Grid.ColumnSpan="6" >
             <TextBlock.Text>
                 <Binding ElementName="_this" Path="Status" />
             </TextBlock.Text>

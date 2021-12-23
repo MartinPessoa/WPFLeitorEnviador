@@ -18,18 +18,19 @@ namespace WPFLeitorEnviador.Services
         private readonly CSVWriter _csvWriter;
         private readonly string _CSVSearchPattern = "*.csv";
 
-        private Action<string>? _informarResultado;
+        private IProgress<string>?_informarResultado;
         
         private TemporaryOddInfoProcessor _oddProcessor;
-        private string _campeonato;
-        public CSVReader(string pasta, CSVWriter csvwriter, string campeonato, Action<string> progress)
+        private List<Odd> _oddsGerando = new List<Odd>();
+        public string Campeonato { get; private set; }
+        public CSVReader(string pasta, CSVWriter csvwriter, string campeonato, IProgress<string> progress = null)
         {
             this._pasta = pasta;    
             this._csvWriter = csvwriter;
             this._informarResultado = progress;
-            this._campeonato = campeonato;
+            this.Campeonato = campeonato;
 
-            _oddProcessor = new TemporaryOddInfoProcessor(this._campeonato);
+            _oddProcessor = new TemporaryOddInfoProcessor(this.Campeonato);
         }
 
         ~CSVReader()
@@ -39,13 +40,15 @@ namespace WPFLeitorEnviador.Services
 
         private string[] GetListaArquivos(string PastaOrigem)
         {
-            return Directory.GetFiles(PastaOrigem, this._CSVSearchPattern);
+            return Directory.GetFiles(PastaOrigem, this._CSVSearchPattern, System.IO.SearchOption.TopDirectoryOnly);
         }
 
-        public async Task<List<Odd>?> Read()
+        public List<Odd> Read()
         {
             //Encontrar Arquivo
             var filename = GetListaArquivos(this._pasta);
+            var qtdArquivos = filename.Length;
+            var arquivoAtual = 0;
 
             Debug.WriteLine("**************** ENTROU EM READ **********************");
             Debug.WriteLine("Lendo da Pasta: " + this._pasta);
@@ -53,14 +56,29 @@ namespace WPFLeitorEnviador.Services
 
             if ( !GuardTemPastaEArquivos(filename) ) return null;
 
-            InformarProgresso("Encontramos "+ filename.Length.ToString() + " arquivos. Começando a Leitura...");
-            //Ler
-            await this.Ler(filename[0]);
+            InformarProgresso("Encontramos "+ qtdArquivos.ToString() + " arquivo(s). Começando a Leitura...");
+            try
+            {
+                //Ler
+                foreach (string arquivo in filename)
+                {
+                    arquivoAtual++;
+                    InformarProgresso("Lendo arquivo " + arquivoAtual.ToString() + " de " + qtdArquivos.ToString() + " arquivo(s).");
+                    this.Ler(arquivo).Wait();
+                    this._oddsGerando.AddRange(GerarOdds());
+                    _oddProcessor = new TemporaryOddInfoProcessor(this.Campeonato);
+                }
+            } catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString()); 
+            }
+    
+            
 
-            InformarProgresso("Leitura Finalizada.");
+            InformarProgresso("Leitura da Pasta Finalizada.");
             //string lido = "";
 
-            return GerarOdds();
+            return _oddsGerando.Distinct().OrderBy(o => o.Data).ToList();
         }
 
         private List<Odd> GerarOdds()
@@ -116,7 +134,7 @@ namespace WPFLeitorEnviador.Services
                             return;
                         }
 
-                        _oddProcessor.ProcessarLinha(fields[1].Split(" "));
+                        _oddProcessor.ProcessarLinha(fields[1].Split(" "), data);
 
 
                         Debug.WriteLine(fields[1]);
@@ -124,6 +142,27 @@ namespace WPFLeitorEnviador.Services
       
                 }
             });
+            try
+            {
+                var data = DateTime.Now;
+
+                var textoData = $"{ data.Year}{ data.Month}{data.Day}-{data.Hour}{data.Minute}{data.Second}";
+
+                var destinoSemArquivo = $"{_pasta}\\ANTIGOS\\{Campeonato}\\";
+                var destinoComArquivo = $"{ destinoSemArquivo}\\LIDO_EM_{textoData}.csv";
+                if (!File.Exists(destinoSemArquivo))
+                {
+                    DirectoryInfo di = Directory.CreateDirectory(destinoSemArquivo);
+                }
+
+                
+                //mover o arquivo lido pra pasta backup
+                File.Move(filename, destinoComArquivo,true);
+            } catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+            }
+
         } 
 
         private async Task<bool> CompararComÚltimaDataLida(DateTime data)
@@ -138,8 +177,8 @@ namespace WPFLeitorEnviador.Services
             {
                 return ;
             }
-
-            _informarResultado.Invoke(Mensagem);
+            Debug.WriteLine("Informando: " + Mensagem);
+            _informarResultado.Report($"Leitor {Campeonato}: {Mensagem}");
         }
 
         private class TemporaryOddInfoProcessor
@@ -157,16 +196,22 @@ namespace WPFLeitorEnviador.Services
                 List<Odd> odds = new();
                 foreach(var odd in this._lista)
                 {
-                    if (odd.EstaCompleto)
+                    if (odd == null) continue;
+
+                    var nova = odd.GetOdd();
+
+                    if(nova != null)
                     {
-                        odds.Add(odd.GetOdd());
+                        odds.Add(nova);
                     }
                 }
 
-                return odds;
+                var retorno = odds.Distinct().OrderBy(o => o.Data).ToList();
+
+                return retorno;
             }
 
-            internal void ProcessarLinha(string[] fields)
+            internal void ProcessarLinha(string[] fields, DateTime data)
             {
                 Debug.Write(" -> linha recebida: " + String.Join(" ",fields));
                 //ler numero #
@@ -177,8 +222,25 @@ namespace WPFLeitorEnviador.Services
                 //encontrar elemento com #-1
                 TemporaryOddInfoAccumulattor tempOddDaVez = EncontrarTempOdd(n);
 
+                // se tem hora mas não tem odd...
+                // ... e ainda por cima estamos tentando adicionar odd...
+                // tem algo errado, pq no arquivo vem primeiro odd depois hora.
+                // criamos uma nova temp, só com a odd, pq a hora certa deve estar chegando na leitura....
+                if(
+                    tempOddDaVez.Hora != null &&
+                    (tempOddDaVez.Over15 == null || tempOddDaVez.Over25 == null) &&
+                    TemporaryOddInfoAccumulattor.EhInformacaoDeOdd(fields)
+                    )
+                {
+                    tempOddDaVez = new TemporaryOddInfoAccumulattor();
+                    tempOddDaVez.Campeonato = _campeonato;
+                    tempOddDaVez.UltimoValor = n;
+                    _lista.Add(tempOddDaVez);
+                }
+
+
                 //processar linha
-                tempOddDaVez.ProcessarLinha(fields, n);
+                tempOddDaVez.ProcessarLinha(fields, n, data);
             }
 
             private TemporaryOddInfoAccumulattor EncontrarTempOdd(int n)
@@ -247,9 +309,36 @@ namespace WPFLeitorEnviador.Services
             public string? Over15 { get; set; }
             public string? Over25 { get; set; }
 
+            public DateTime DataHora { get; set; }
+
             public int UltimoValor { get; set; }
 
-            public bool ProcessarLinha(string[] linhaSplitada, int hashNLinha) 
+            public static bool EhInformaçãoProcessável(string[] linhaSplitada)
+            {
+                if(linhaSplitada[1] != "Extrair") return false;
+
+                return true;
+            }
+
+            public static bool EhInformacaoDeOdd(string[] linhaSplitada)
+            {
+                if(!EhInformaçãoProcessável(linhaSplitada)) return false;
+
+                if (linhaSplitada[3].Contains('.')) return true;
+
+                return false;
+            }
+
+            public static bool EhInformacaoDeHora(string[] linhaSplitada)
+            {
+                if (!EhInformaçãoProcessável(linhaSplitada)) return false;
+
+                if (linhaSplitada[3].Contains(':')) return true;
+
+                return false;
+            }
+
+            public bool ProcessarLinha(string[] linhaSplitada, int hashNLinha, DateTime data) 
             {
                 Debug.Write(" || PROCESSAR LINHA || ");
                 if (this.UltimoValor != hashNLinha + 1)
@@ -264,24 +353,15 @@ namespace WPFLeitorEnviador.Services
 
                 Debug.Write(" * Ultimo Valor depois: " + UltimoValor);
 
-                if (linhaSplitada[1] != "Extrair")
-                {
-
-                    Debug.Write(" * linhaSplitada[1]: " + linhaSplitada[1] + " SAINDO * || <- \n");
-                    return true;
-                }
-
-
-
-                    //hora e minuto
-                    if (linhaSplitada[3].Contains(':'))
+                //hora e minuto
+                if (EhInformacaoDeHora(linhaSplitada))
                 {
                     Debug.Write(" * Vou Anotar minuto e hora: " + linhaSplitada[3] + "EU SOU: " + ToString());
-                    return AnotarMinutoEHora(linhaSplitada[3]);
+                    return AnotarMinutoEHora(linhaSplitada[3], data);
                 }
 
                 //odd
-                if (linhaSplitada[3].Contains('.'))
+                if (EhInformacaoDeOdd(linhaSplitada))
                 {
                     Debug.Write(" * Vou Anotar alguma odd: " + linhaSplitada[3] + "EU SOU: " + ToString());
                     return AnotarOdd(linhaSplitada[3]);
@@ -296,10 +376,10 @@ namespace WPFLeitorEnviador.Services
 
             public override string ToString()
             {
-                return $"OBJECTO TEMPORARIO: hora: {Hora}, minuto: {Minuto}, campeonato: {Campeonato}, odd15: {Over15}, over25: {Over25}";
+                return $"OBJETO TEMPORARIO: hora: {Hora}, minuto: {Minuto}, campeonato: {Campeonato}, odd15: {Over15}, over25: {Over25}";
             }
 
-            private bool AnotarMinutoEHora(string minutoEHora)
+            private bool AnotarMinutoEHora(string minutoEHora, DateTime data)
             {
                 var splitado = minutoEHora.Split(':');
 
@@ -309,8 +389,15 @@ namespace WPFLeitorEnviador.Services
                     return false;
                 }
 
+                
+
                 Hora = splitado[0];
                 Minuto = splitado[1];
+
+                var intHora = int.Parse(Hora);
+                var intMinuto = int.Parse(Minuto);
+
+                DataHora = new DateTime(data.Year, data.Month, data.Day, intHora, intMinuto, 0);
 
                 return true;
             }
@@ -354,7 +441,8 @@ namespace WPFLeitorEnviador.Services
                         Hora != null &&
                         Minuto != null &&
                         Over15 != null &&
-                        Over25 != null);
+                        Over25 != null 
+                        );
                 } 
             }
 
@@ -365,7 +453,7 @@ namespace WPFLeitorEnviador.Services
                     return null;
                 }
 
-                return new Odd(Campeonato, Hora, Minuto, Over15, Over25);
+                return new Odd(Campeonato, Over15, Over25, DataHora);
 
             }
 

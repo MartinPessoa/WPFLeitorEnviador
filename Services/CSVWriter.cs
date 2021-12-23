@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using WPFLeitorEnviador.Domain;
 
@@ -9,10 +11,12 @@ namespace WPFLeitorEnviador.Services
 {
     internal class CSVWriter
     {
-        private string _pasta;
-        private Action<string> _progress;
+        private readonly string _pasta;
+        private string _campeonato = "";
+        private IProgress<string> _progress;
+        private bool _isWriting;
 
-        public CSVWriter(string pasta, Action<string> progress)
+        public CSVWriter(string pasta, IProgress<string> progress)
         {
             this._pasta = pasta;
             this._progress = progress;
@@ -22,12 +26,100 @@ namespace WPFLeitorEnviador.Services
             _progress = null;
         }
 
-        public async Task Write(List<Odd> lista)
+        public async Task Write(List<Odd> lista, string campeonato)
         {
+            this._campeonato = campeonato;
             //escolher arquivo
+            var data = DateTime.Now;
+            var textoData = $"{ data.Year}{ data.Month}{data.Day}-{data.Hour}{data.Minute}{data.Second}";
+
+
+
+
+            var destinoSemArquivo = $"{_pasta}\\{_campeonato}";
+            var destinoComArquivo = $"{_pasta}\\{_campeonato}\\{textoData}.csv";
+
+            if (!File.Exists(destinoSemArquivo))
+            {
+                DirectoryInfo di = Directory.CreateDirectory(destinoSemArquivo);
+            }
+
+
+            var pastaBack = $"{_pasta}\\ANTIGOS\\{_campeonato}\\{textoData}.csv";
+
+            var listaString = ToCSVString(lista);
+
+            //verificar se existe
+            //if (!File.Exists(destinoSemArquivo))
+            //{
+                //criarnovo
+            //    await CriarEEscrever(listaString, destinoComArquivo);
+            //    return;
+            //}
+
+            //está muito grande?
+            //var fileInfo = new FileInfo(destinoComArquivo);
+            //if (fileInfo.Length > 5000000) //5 MB
+            //{
+                //backup do anterior
+            //    File.Move(destinoComArquivo, pastaBack);
+
+            while(_isWriting)
+            {
+                _progress.Report("Aguardando liberação para escrever...");
+                Thread.Sleep(300);
+            }
+
+                //criar novo
+               await CriarEEscrever(listaString, destinoComArquivo);
+            //}
 
             //escrever
+            //AppendAoArquivo(listaString, destinoComArquivo);
 
+        }
+
+        private void AppendAoArquivo(string lista, string arquivo)
+        {
+            byte[] start = Encoding.UTF8.GetBytes(lista);
+            //byte[] ending = Encoding.UTF8.GetBytes("</root>");
+
+            byte[] data = File.ReadAllBytes(arquivo);
+
+            int bom = (data[0] == 0xEF) ? 3 : 0;
+
+            using (FileStream s = File.Create(arquivo))
+            {
+                if (bom > 0)
+                {
+                    s.Write(data, 0, bom);
+                }
+                s.Write(start, 0, start.Length);
+                s.Write(data, bom, data.Length - bom);
+                //s.Write(ending, 0, ending.Length);
+            }
+        }
+
+        private async Task CriarEEscrever(string lista, string arquivo)
+        {
+             
+            this._isWriting = true;
+            await File.WriteAllTextAsync(arquivo,lista);
+            this._isWriting = false;
+        }
+
+        private string ToCSVString(List<Odd> lista)
+        {
+            var csv = new StringBuilder();
+
+            lista.ForEach(o =>
+            {
+                
+
+                csv.Append($"{o.Campeonato},{o.Hora},{o.Minuto},{o.Over15},{o.Over25}\n");
+            });
+
+            return csv.ToString();
         }
     }
 }
