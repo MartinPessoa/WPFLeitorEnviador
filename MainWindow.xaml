@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFLeitorEnviador"
         mc:Ignorable="d"
-        Title="Leitor Odds" Height="892" Width="972"
+        Title="Leitor Odds" Height="912" Width="976"
         x:Name="_this">
 
 

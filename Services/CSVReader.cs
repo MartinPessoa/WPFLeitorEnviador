@@ -16,18 +16,18 @@ namespace WPFLeitorEnviador.Services
         private readonly string _pasta;
         private readonly string _CSVSearchPattern = "*.csv";
 
-        private IProgress<string>?_informarResultado;
+        private IProgress<string>? _informarResultado;
         
-        private OddListProcessor _oddProcessor;
-        private List<Odd> _oddsGerando = new List<Odd>();
+        public IListProcessor Processor { get; private set; }
+
         public string Campeonato { get; private set; }
-        public CSVReader(string pasta, string campeonato, IProgress<string> progress = null)
+        public CSVReader(string pasta, string campeonato, IListProcessor processor, IProgress<string> progress)
         {
             this._pasta = pasta;    
             this._informarResultado = progress;
             this.Campeonato = campeonato;
 
-            _oddProcessor = new OddListProcessor(this.Campeonato);
+            Processor = processor;
         }
 
         ~CSVReader()
@@ -40,7 +40,7 @@ namespace WPFLeitorEnviador.Services
             return Directory.GetFiles(PastaOrigem, this._CSVSearchPattern, System.IO.SearchOption.TopDirectoryOnly);
         }
 
-        public List<Odd> Read()
+        public bool Read()
         {
             //Encontrar Arquivo
             var filename = GetListaArquivos(this._pasta);
@@ -51,7 +51,7 @@ namespace WPFLeitorEnviador.Services
             Debug.WriteLine("Lendo da Pasta: " + this._pasta);
             Debug.WriteLine("Primeiro Arquivo Encontrado: " + String.Join(" - ", filename));
 
-            if ( !GuardTemPastaEArquivos(filename) ) return null;
+            if ( !GuardTemPastaEArquivos(filename) ) return false;
 
             InformarProgresso("Encontramos "+ qtdArquivos.ToString() + " arquivo(s). Começando a Leitura...");
             try
@@ -62,12 +62,13 @@ namespace WPFLeitorEnviador.Services
                     arquivoAtual++;
                     InformarProgresso("Lendo arquivo " + arquivoAtual.ToString() + " de " + qtdArquivos.ToString() + " arquivo(s).");
                     this.Ler(arquivo).Wait();
-                    this._oddsGerando.AddRange(GerarItens());
-                    _oddProcessor = new OddListProcessor(this.Campeonato);
+                    //this._oddsGerando.AddRange(GerarItens());
+                    Processor.AcumularEZerar();
                 }
             } catch (Exception ex)
             {
-                Debug.WriteLine(ex.ToString()); 
+                Debug.WriteLine(ex.ToString());
+                return false;
             }
     
             
@@ -75,13 +76,13 @@ namespace WPFLeitorEnviador.Services
             InformarProgresso("Leitura da Pasta Finalizada.");
             //string lido = "";
 
-            return _oddsGerando.Distinct().OrderBy(o => o.Data).ToList();
+            return true;
         }
 
-        private List<Odd> GerarItens()
+        /*private List<Odd> GerarItens()
         {
             return _oddProcessor.GetOdds();
-        }
+        }*/
 
         private bool GuardTemPastaEArquivos(string[] listaArquivos)
         {
@@ -131,7 +132,7 @@ namespace WPFLeitorEnviador.Services
                             return;
                         }
 
-                        _oddProcessor.ProcessarLinha(fields[1].Split(" "), data);
+                        Processor.ProcessarLinha(fields[1].Split(" "), data);
 
 
                         Debug.WriteLine(fields[1]);

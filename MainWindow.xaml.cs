@@ -200,7 +200,7 @@ namespace WPFLeitorEnviador
             return String.Join("\\", filename.Split('\\').ToList().SkipLast(1));
         }
 
-        private async Task Processar(string pastaDestino, string pastaCopa, string pastaEuro, string pastaPremier, string pastaSuper,CancellationToken cancelToken,Action<string> CallbackStatus)
+        private async Task ProcessarOdds(string pastaDestino, string pastaCopa, string pastaEuro, string pastaPremier, string pastaSuper,Action<string> CallbackStatus, CancellationToken cancelToken)
         {
             IProgress<string> informarParada = new Progress<string>(ParouDaemonOdds);
             
@@ -209,84 +209,16 @@ namespace WPFLeitorEnviador
             var progress2 = new Progress<string>(CallbackStatus);
             var progress3 = new Progress<string>(CallbackStatus);
 
+            var oddProcessorCopa = new OddListProcessor("COPA");
+            var oddProcessorEuro = new OddListProcessor("EURO");
+            var oddProcessorSuper = new OddListProcessor("SUPER");
+            var oddProcessorPremier = new OddListProcessor("PREMIER");
+
             _começouLeitura = true;
             InformarStatus("Lendo...");
             try
             {
-                await Task.Factory.StartNew(async () =>
-                {
-                    Debug.WriteLine("Thread funcionando");
-                    var readers = new List<CSVReader>();
-                    CSVWriter writer = new(pastaDestino, progress);
-
-                    if (pastaCopa != "")
-                    {
-                        readers.Add(new CSVReader(pastaCopa, "COPA", progress));
-                    }
-
-                    if (pastaEuro != "")
-                    {
-                        readers.Add(new CSVReader(pastaEuro, "EURO", progress1));
-                    }
-
-
-                    if (pastaPremier != "")
-                    {
-                        readers.Add(new CSVReader(pastaPremier, "PREMIER", progress2));
-                    }
-
-                    if (pastaSuper != "")
-                    {
-                        readers.Add(new CSVReader(pastaSuper, "SUPER", progress3));
-                    }
-
-                    while (true)
-                    {
-
-                        if (cancelToken.IsCancellationRequested)
-                        {
-                            informarParada.Report("Cancelada Leitura de Odds.");
-                            break;
-                        }
-
-
-                        var listaOdds = new List<List<Odd>>();
-                        foreach (CSVReader reader in readers)
-                        {
-                            //CallbackStatus("Iniciando " + reader.Campeonato);
-                            var odds = reader.Read();
-                            if (odds != null)
-                            {
-                                //CallbackStatus(reader.Campeonato + " finalizado. Lido " + odds.Count + " odds.");
-                                listaOdds.Add(odds);
-                            }
-                        }
-
-                        Debug.Write("temos " + listaOdds.Count + "listas lidas");
-
-                        foreach (var odd in listaOdds)
-                        {
-                            Debug.WriteLine("Escrevendo lista com " + odd.Count() + " itens");
-                            progress.Report("Escrevendo...");
-                            await writer.Write(odd, odd.First().Campeonato);
-                            Thread.Sleep(150);
-                        }
-
-                        for(int i = 5;i>0;i--)
-                        {
-                            if (cancelToken.IsCancellationRequested)
-                            {
-                                informarParada.Report("Cancelada Leitura de Odds.");
-                                return;
-                            }
-
-                            progress.Report($"Escrita finalizada. Aguardando {10*i} segundos...");
-                            Thread.Sleep(1000 * 10);
-                        }
-
-                        progress.Report("Reiniciando leitura...");
-                    }
-                }, TaskCreationOptions.LongRunning);
+                await Task.Factory.StartNew(CSVWorker(pastaDestino, pastaCopa, pastaEuro, pastaPremier, pastaSuper, informarParada, progress, progress1, progress2, progress3, oddProcessorCopa, oddProcessorEuro, oddProcessorSuper, oddProcessorPremier, cancelToken), TaskCreationOptions.LongRunning);
             }
             catch (Exception ex)
             {
@@ -294,6 +226,84 @@ namespace WPFLeitorEnviador
                 ParouDaemonOdds("");
                 InformarStatus("Parado por causa de exception.");
             } 
+        }
+
+        private static Func<Task> CSVWorker(string pastaDestino, string pastaCopa, string pastaEuro, string pastaPremier, string pastaSuper, IProgress<string> informarParada, IProgress<string> progressReporterCopa, Progress<string> progressReporterEuro, Progress<string> progressReporterPremier, Progress<string> progressReporterSuper, IListProcessor processorCopa, IListProcessor processorEuro, IListProcessor processorSuper, IListProcessor processorPremier, CancellationToken cancelToken)
+        {
+            return async () =>
+            {
+                Debug.WriteLine("Thread funcionando");
+                var readers = new List<CSVReader>();
+                CSVWriter writer = new(pastaDestino, progressReporterCopa);
+
+                if (pastaCopa != "")
+                {
+                    readers.Add(new CSVReader(pastaCopa, "COPA", processorCopa, progressReporterCopa));
+                }
+
+                if (pastaEuro != "")
+                {
+                    readers.Add(new CSVReader(pastaEuro, "EURO", processorEuro, progressReporterEuro));
+                }
+
+
+                if (pastaPremier != "")
+                {
+                    readers.Add(new CSVReader(pastaPremier, "PREMIER", processorPremier, progressReporterPremier));
+                }
+
+                if (pastaSuper != "")
+                {
+                    readers.Add(new CSVReader(pastaSuper, "SUPER", processorSuper, progressReporterSuper));
+                }
+
+                while (true)
+                {
+
+                    if (cancelToken.IsCancellationRequested)
+                    {
+                        informarParada.Report("Cancelada Leitura de Odds.");
+                        break;
+                    }
+
+
+                    var listaStrings = new List<(string, string)>();
+                    foreach (CSVReader reader in readers)
+                    {
+                        //CallbackStatus("Iniciando " + reader.Campeonato);
+                        var leu = reader.Read();
+                        if (leu)
+                        {
+                            //CallbackStatus(reader.Campeonato + " finalizado. Lido " + odds.Count + " odds.");
+                            listaStrings.Add((reader.Processor.GetStrings(), reader.Processor.GetCampeonato()));
+                        }
+                    }
+
+                    Debug.Write("temos " + listaStrings.Count + "listas lidas");
+
+                    foreach (var s in listaStrings)
+                    {
+                        //Debug.WriteLine("Escrevendo lista com " + odd.Count() + " itens");
+                        progressReporterCopa.Report("Escrevendo...");
+                        await writer.Write(s.Item1, s.Item2);
+                        Thread.Sleep(150);
+                    }
+
+                    for (int i = 5; i > 0; i--)
+                    {
+                        if (cancelToken.IsCancellationRequested)
+                        {
+                            informarParada.Report("Cancelada Leitura de Odds.");
+                            return;
+                        }
+
+                        progressReporterCopa.Report($"Escrita finalizada. Aguardando {10 * i} segundos...");
+                        Thread.Sleep(1000 * 10);
+                    }
+
+                    progressReporterCopa.Report("Reiniciando leitura...");
+                }
+            };
         }
 
         private void ParouDaemonOdds(string info)
@@ -327,7 +337,7 @@ namespace WPFLeitorEnviador
             try
             {
                 Debug.WriteLine("Vai Começar...");
-                await Processar(PastaDestino, PastaCopaFonte, PastaEuroFonte, PastaPremierFonte, PastaSuperFonte, token, InformarStatus);
+                await ProcessarOdds(PastaDestino, PastaCopaFonte, PastaEuroFonte, PastaPremierFonte, PastaSuperFonte, InformarStatus, token);
                 Debug.WriteLine("Terminou");
             } catch (Exception ex)
             {

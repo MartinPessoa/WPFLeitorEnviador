@@ -26,7 +26,7 @@ namespace WPFLeitorEnviador.Services
             _progress = null;
         }
 
-        public async Task Write(List<Odd> lista, string campeonato)
+        public async Task Write(string dados, string campeonato)
         {
             this._campeonato = campeonato;
             //escolher arquivo
@@ -47,7 +47,6 @@ namespace WPFLeitorEnviador.Services
 
             var pastaBack = $"{_pasta}\\ANTIGOS\\{_campeonato}\\{textoData}.csv";
 
-            var listaString = ToCSVString(lista);
 
             //verificar se existe
             //if (!File.Exists(destinoSemArquivo))
@@ -71,7 +70,7 @@ namespace WPFLeitorEnviador.Services
             }
 
                 //criar novo
-               await CriarEEscrever(listaString, destinoComArquivo);
+               await CriarEEscrever(dados, destinoComArquivo);
             //}
 
             //escrever
@@ -106,20 +105,6 @@ namespace WPFLeitorEnviador.Services
             this._isWriting = true;
             await File.WriteAllTextAsync(arquivo,lista);
             this._isWriting = false;
-        }
-
-        private string ToCSVString(List<Odd> lista)
-        {
-            var csv = new StringBuilder();
-
-            lista.ForEach(o =>
-            {
-                
-
-                csv.Append($"{o.Campeonato},{o.Hora},{o.Minuto},{o.Over15},{o.Over25}\n");
-            });
-
-            return csv.ToString();
         }
     }
 }
