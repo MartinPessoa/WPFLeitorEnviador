@@ -122,7 +122,7 @@ namespace WPFLeitorEnviador.Services
                         // pegar a data
                         var data = DateTimeConverterModel.Converter(fields[0]);
 
-                        Debug.Write(" -> Data: " + fields[0]);
+                        Debug.WriteLine(" -> Data: " + fields[0] + "\n");
 
                         //conferir data com ultima data lida
                         var dataNãoFoiLida = await CompararComÚltimaDataLida(data);

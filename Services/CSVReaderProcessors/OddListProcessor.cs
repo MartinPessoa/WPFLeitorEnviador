@@ -4,20 +4,18 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using WPFLeitorEnviador.Domain;
+using WPFLeitorEnviador.Services.CSVReaderProcessors;
 
 namespace WPFLeitorEnviador.Services
 {
 
-    internal class OddListProcessor : IListProcessor
+    internal class OddListProcessor : BaseListProcessor, IListProcessor
     {
         private List<OddItemProcessor> _lista = new();
-        private readonly string _campeonato = "";
-
         private readonly List<Odd> _acumulados;
 
-        public OddListProcessor(string campeonato)
+        public OddListProcessor(string campeonato) : base(campeonato)
         {
-            this._campeonato = campeonato;
             _acumulados = new List<Odd>();
         }
 
@@ -128,16 +126,6 @@ namespace WPFLeitorEnviador.Services
 
         }
 
-        private int PegarInt(string v)
-        {
-            if (int.TryParse(v.Substring(1), out int valor))
-            {
-                return valor;
-            }
-
-            return -1;
-        }
-
         public string GetStrings()
         {
             var csv = new StringBuilder();
@@ -150,11 +138,6 @@ namespace WPFLeitorEnviador.Services
             });
 
             return csv.ToString();
-        }
-
-        public string GetCampeonato()
-        {
-            return _campeonato;
         }
     }
 }

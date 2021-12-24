@@ -141,34 +141,34 @@
 
                 <TextBlock Grid.Column="1" Grid.Row="7" Grid.ColumnSpan="3" >
                     <TextBlock.Text>
-                        <Binding ElementName="_this" Path="PastaEuroFonte" FallbackValue="(nenhum asta selecionada)"/>
+                        <Binding ElementName="_this" Path="PastaEuroResultadosFonte" FallbackValue="(nenhum asta selecionada)"/>
                     </TextBlock.Text>
                 </TextBlock>
                 <TextBlock Grid.Row="7" Grid.ColumnSpan="3" Grid.Column="5">
                     <TextBlock.Text>
-                        <Binding ElementName="_this" Path="PastaCopaFonte" FallbackValue="(nenhum asta selecionada)"/>
+                        <Binding ElementName="_this" Path="PastaCopaResultadosFonte" FallbackValue="(nenhum asta selecionada)"/>
                     </TextBlock.Text>
                 </TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="8" Grid.ColumnSpan="3" >
                     <TextBlock.Text>
-                        <Binding ElementName="_this" Path="PastaPremierFonte" FallbackValue="(nenhum asta selecionada)"/>
+                        <Binding ElementName="_this" Path="PastaPremierResultadosFonte" FallbackValue="(nenhum asta selecionada)"/>
                     </TextBlock.Text>
                 </TextBlock>
                 <TextBlock Grid.Row="8" Grid.ColumnSpan="3" Grid.Column="5">
                     <TextBlock.Text>
-                        <Binding ElementName="_this" Path="PastaSuperFonte" FallbackValue="(nenhum asta selecionada)"/>
+                        <Binding ElementName="_this" Path="PastaSuperResultadosFonte" FallbackValue="(nenhum asta selecionada)"/>
                     </TextBlock.Text>
                 </TextBlock>
 
                 <TextBlock Grid.Column="1" Grid.Row="9" Grid.ColumnSpan="3" >
                     <TextBlock.Text>
-                        <Binding ElementName="_this" Path="PastaDestino" FallbackValue="(nenhum asta selecionada)"/>
+                        <Binding ElementName="_this" Path="PastaDestinoResultados" FallbackValue="(nenhum asta selecionada)"/>
                     </TextBlock.Text>
                 </TextBlock>
 
 
-                <Button Click="BtnStart_Click" x:Name="btnStartResultados" Grid.Row="10" Grid.Column="5">Começar</Button>
-                <Button Click="BtnStop_Click" x:Name="btnStopResultados" Grid.Row="10" Grid.Column="7" IsEnabled="false">Parar</Button>
+                <Button Click="btnStartResultados_Click" x:Name="btnStartResultados" Grid.Row="10" Grid.Column="5">Começar</Button>
+                <Button Click="BtnStopResultados_Click" x:Name="btnStopResultados" Grid.Row="10" Grid.Column="7" IsEnabled="false">Parar</Button>
 
 
 
@@ -201,7 +201,7 @@
                     <Label Content="Processador de ODD:"></Label>
                     <TextBlock  Grid.Row="1">
                         <TextBlock.Text>
-                            <Binding ElementName="_this" Path="Status" />
+                            <Binding ElementName="_this" Path="StatusOdds" />
                         </TextBlock.Text>
                     </TextBlock>
                 </Grid>

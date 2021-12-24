@@ -21,10 +21,6 @@ namespace WPFLeitorEnviador.Services
             this._pasta = pasta;
             this._progress = progress;
         }
-        ~CSVWriter()
-        {
-            _progress = null;
-        }
 
         public async Task Write(string dados, string campeonato)
         {

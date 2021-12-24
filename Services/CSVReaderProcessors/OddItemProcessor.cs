@@ -2,11 +2,12 @@
 using System.Diagnostics;
 using System.Globalization;
 using WPFLeitorEnviador.Domain;
+using WPFLeitorEnviador.Services.CSVReaderProcessors;
 
 namespace WPFLeitorEnviador.Services
 {
 
-        internal class OddItemProcessor
+        internal class OddItemProcessor : BaseItemProcessor
         {
             public enum TempOddInfoCampo
             {
@@ -15,26 +16,13 @@ namespace WPFLeitorEnviador.Services
                 overs
             }
 
-            public string? Campeonato { get; set; }
-
-            public string? Hora { get; set;  }
-
-            public string? Minuto { get; set; }
             public string? Over15 { get; set; }
-            public string? Over25 { get; set; }
 
-            public DateTime DataHora { get; set; }
+            public string? Over25 { get; set; }
 
             public int UltimoValor { get; set; }
 
-            public static bool EhInformaçãoProcessável(string[] linhaSplitada)
-            {
-                if(linhaSplitada[1] != "Extrair") return false;
-
-                return true;
-            }
-
-            public static bool EhInformacaoDeOdd(string[] linhaSplitada)
+        public static bool EhInformacaoDeOdd(string[] linhaSplitada)
             {
                 if(!EhInformaçãoProcessável(linhaSplitada)) return false;
 
@@ -71,7 +59,7 @@ namespace WPFLeitorEnviador.Services
                 if (EhInformacaoDeHora(linhaSplitada))
                 {
                     Debug.Write(" * Vou Anotar minuto e hora: " + linhaSplitada[3] + "EU SOU: " + ToString());
-                    return AnotarMinutoEHora(linhaSplitada[3], data);
+                    return AnotarMinutoEHora(linhaSplitada[3], data, ':');
                 }
 
                 //odd
@@ -93,30 +81,7 @@ namespace WPFLeitorEnviador.Services
                 return $"OBJETO TEMPORARIO: hora: {Hora}, minuto: {Minuto}, campeonato: {Campeonato}, odd15: {Over15}, over25: {Over25}";
             }
 
-            private bool AnotarMinutoEHora(string minutoEHora, DateTime data)
-            {
-                var splitado = minutoEHora.Split(':');
-
-                if (Hora != null || Minuto != null)
-                {
-                    Debug.WriteLine("Tentando sobreescrever Hora ou Minuto");
-                    return false;
-                }
-
-                
-
-                Hora = splitado[0];
-                Minuto = splitado[1];
-
-                var intHora = int.Parse(Hora);
-                var intMinuto = int.Parse(Minuto);
-
-                DataHora = new DateTime(data.Year, data.Month, data.Day, intHora, intMinuto, 0);
-
-                return true;
-            }
-
-            private bool AnotarOdd(string odd)
+        private bool AnotarOdd(string odd)
             {
                 
                 if (double.TryParse(odd, System.Globalization.NumberStyles.AllowDecimalPoint, new CultureInfo("en-US"),out double teste))
