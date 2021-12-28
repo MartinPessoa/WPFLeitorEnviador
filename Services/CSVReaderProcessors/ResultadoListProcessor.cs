@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -77,5 +78,13 @@ namespace WPFLeitorEnviador.Services.CSVReaderProcessors
 
         }
 
+        public List<object> GetForJsons()
+        {
+            var retorno = new List<object>();
+
+            Acumulados.ForEach(i => { retorno.Add(i); });
+
+            return retorno;
+        }
     }
 }

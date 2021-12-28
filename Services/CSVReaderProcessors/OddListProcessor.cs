@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -138,6 +139,15 @@ namespace WPFLeitorEnviador.Services
             });
 
             return csv.ToString();
+        }
+
+        public List<object> GetForJsons()
+        {
+            var retorno = new List<object>();
+
+            Acumulados.ForEach(i => { retorno.Add(i); });
+
+           return retorno;
         }
     }
 }

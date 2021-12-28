@@ -98,6 +98,8 @@ namespace WPFLeitorEnviador
         public static readonly DependencyProperty PastaDestinoResultadosProperty =
            DependencyProperty.Register("PastaDestinoResultados", typeof(string), typeof(MainWindow), new UIPropertyMetadata(string.Empty));
 
+
+
         public string PastaEuroResultadosFonte
         {
             get { return (string)this.GetValue(PastaEuroResultadosFonteProperty); }
@@ -133,6 +135,17 @@ namespace WPFLeitorEnviador
             get { return (string)this.GetValue(StatusResultadosProperty); }
             set { this.SetValue(StatusResultadosProperty, value); }
         }
+
+        // **************************************** ENVIADOR PLANILHA GOOGLE *********************************************************************
+        public static readonly DependencyProperty StatusEnviadorGoogleSheetsProperty =
+            DependencyProperty.Register("StatusEnviadorGoogleSheets", typeof(string), typeof(MainWindow), new UIPropertyMetadata(string.Empty));
+
+        public string StatusEnviadorGoogleSheets
+        {
+            get { return (string)this.GetValue(StatusEnviadorGoogleSheetsProperty); }
+            set { this.SetValue(StatusEnviadorGoogleSheetsProperty, value); }
+        }
+
 
         public MainWindow()
         {
@@ -294,8 +307,9 @@ namespace WPFLeitorEnviador
                     progress3,
                     oddProcessorCopa,
                     oddProcessorEuro,
-                    oddProcessorSuper,
                     oddProcessorPremier,
+                    oddProcessorSuper,
+                    50,
                     cancelToken
                 );
 
@@ -341,9 +355,11 @@ namespace WPFLeitorEnviador
                     progress3,
                     resultadoProcessorCopa,
                     resultadoProcessorEuro,
-                    resultadoProcessorSuper,
                     resultadoProcessorPremier,
-                    cancelToken
+                    resultadoProcessorSuper,
+                    3,
+                    cancelToken,
+                    new Progress<string>(InformarStatusEnviadorGoogle)
                 );
 
             _começouLeituraResultados = true;
@@ -420,6 +436,11 @@ namespace WPFLeitorEnviador
             this.StatusOdds = status;
         }
 
+        private void InformarStatusEnviadorGoogle(string status)
+        {
+            this.StatusEnviadorGoogleSheets = status;
+        }
+
         private void InformarStatusResultados(string status)
         {
             this.StatusResultados = status;
@@ -449,5 +470,11 @@ namespace WPFLeitorEnviador
                 Debug.WriteLine(ex);
             }
         }
+
+        //private void BtnTesteAppsScripts_Click(object sender, RoutedEventArgs e)
+        //{
+         //   var enviadorPlanilhaService = new EnviadorPlanilhaService();
+         //   enviadorPlanilhaService.EnviarDadosResultadosAsync(null).Wait();
+        //}
     }
 }

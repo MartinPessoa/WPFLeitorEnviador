@@ -59,6 +59,7 @@ namespace WPFLeitorEnviador.Services
                 //Ler
                 foreach (string arquivo in filename)
                 {
+                    if (!EhDesteCampeonato(arquivo)) continue;
                     arquivoAtual++;
                     InformarProgresso("Lendo arquivo " + arquivoAtual.ToString() + " de " + qtdArquivos.ToString() + " arquivo(s).");
                     this.Ler(arquivo).Wait();
@@ -77,6 +78,42 @@ namespace WPFLeitorEnviador.Services
             //string lido = "";
 
             return true;
+        }
+
+        private bool EhDesteCampeonato(string arquivo)
+        {
+            string strComparar = "";
+
+            Debug.WriteLine(" @@ Vamos verificar nome de arquivo: " + arquivo);
+
+            switch (Campeonato)
+            {
+                case "EURO":
+                    strComparar += "Euro";
+                    break;
+                case "COPA":
+                    strComparar += "Copa";
+                    break;
+                case "SUPER":
+                    strComparar += "Super";
+                    break;
+                case "PREMIER":
+                    strComparar += "Premier";
+                    break;
+
+                default:
+                    Debug.WriteLine(" @@ Saindo porque case default.");
+                    return false;
+            }
+
+            if (arquivo.Split("\\").Last().Contains(strComparar))
+            {
+                Debug.WriteLine(" @@ Match com: " + strComparar);
+                return true;
+            }
+
+            Debug.WriteLine(" @@ Não deu match com: " + strComparar);
+            return false;
         }
 
         /*private List<Odd> GerarItens()

@@ -176,20 +176,6 @@
             </Grid>
         </GroupBox>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         <StatusBar Background="Beige"  VerticalAlignment="Bottom" BorderBrush="LightSlateGray" BorderThickness="1" >
             <StatusBarItem>
 
@@ -219,6 +205,22 @@
                 <TextBlock    Grid.Row="1">
                     <TextBlock.Text>
                         <Binding ElementName="_this" Path="StatusResultados" />
+                    </TextBlock.Text>
+                </TextBlock>
+
+
+            </Grid>
+            <Separator/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Label Content="Enviador Planilha"></Label>
+                <TextBlock    Grid.Row="1">
+                    <TextBlock.Text>
+                        <Binding ElementName="_this" Path="StatusEnviadorGoogleSheets" />
                     </TextBlock.Text>
                 </TextBlock>
 

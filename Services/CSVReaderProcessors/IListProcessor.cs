@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace WPFLeitorEnviador.Services
 {
@@ -12,6 +13,8 @@ namespace WPFLeitorEnviador.Services
         void AcumularEZerar();
 
         string GetStrings();
+
+        List<object> GetForJsons();
 
         string GetCampeonato();
     }

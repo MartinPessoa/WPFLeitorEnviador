@@ -46,13 +46,13 @@ namespace WPFLeitorEnviador.Services.CSVReaderProcessors
             // "#13 Extrair Texto: Euro Cup - 12.08Bélgica1 - 0País de Gales"
 
             //   0     1       2     3         4   5   6     7         8    9
-            // "#13 Extrair Texto: Campeonato do Mundo - 12.08Bélgica1 - 0País de Gales"
+            //"#13 Extrair Texto: Copa do Mundo - 16.01Argentina0 - 3Brasil"
 
-            //   0     1       2     3         4        5      6    7 
-            // "#13 Extrair Texto: Premiership - 12.08Bélgica1 - 0País de Gales"
+            //   0     1       2     3         4        5             6     
+            //"#13 Extrair Texto: Premier League - 16.03Everton3 - 1Liverpool"
 
             //   0     1       2     3   4  5       6       7     8 
-            // "#13 Extrair Texto: Superliga - 12.08Bélgica1 - 0País de Gales"
+            // "#12 Extrair Texto: Superleague - 16.07Milan2 - 1Celtic"
 
             // OBS4: Caso extra, 5+ gols:
             // "#15 Extrair Texto: Euro Cup - 12.35 - undefined"
@@ -60,18 +60,19 @@ namespace WPFLeitorEnviador.Services.CSVReaderProcessors
             if(linhaSplitada.Count() < 4) return false;
 
             var campeonato = "";
+            Debug.WriteLine("Vamos testar linhaSplitada[3] É: " + linhaSplitada[3] );
             switch (linhaSplitada[3])
             {
                 case "Euro":
                     campeonato = "EURO";
                     break;
-                case "Campeonato":
+                case "Copa":
                     campeonato = "COPA";
                     break;
-                case "Premiership":
+                case "Premier":
                     campeonato = "PREMIER";
                     break;
-                case "Superliga":
+                case "Superleague":
                     campeonato = "SUPER";
                     break;
                 default:
@@ -118,6 +119,9 @@ namespace WPFLeitorEnviador.Services.CSVReaderProcessors
             GolsCasa = gc;
             GolsVisitante = gv;
             Debug.WriteLine("******* Parseou com sucesso resultados " + GolsCasa + " - " + GolsVisitante);
+
+
+            Debug.WriteLine($"******* RESULTADO : camp {Campeonato} | golscasa {GolsCasa} | golsvisi {GolsVisitante} | Hora {Hora} | Minuto {Minuto}");
             return true;
         }
 
