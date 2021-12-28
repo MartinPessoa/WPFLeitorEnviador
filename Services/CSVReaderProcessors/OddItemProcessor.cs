@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
-using WPFLeitorEnviador.Domain;
+using iBets.Core;
 using WPFLeitorEnviador.Services.CSVReaderProcessors;
 
 namespace WPFLeitorEnviador.Services

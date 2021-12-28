@@ -13,4 +13,12 @@
     <PackageReference Include="Google.Cloud.Firestore" Version="2.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\iBets.Core\iBets.Core.csproj" />
+  </ItemGroup>
+
 </Project>

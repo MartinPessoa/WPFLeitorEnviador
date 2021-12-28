@@ -3,17 +3,12 @@ using Google.Apis.Script.v1;
 using Google.Apis.Script.v1.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WPFLeitorEnviador.Domain;
-using static Google.Apis.Script.v1.ScriptsResource;
 
 namespace WPFLeitorEnviador.Services
 {

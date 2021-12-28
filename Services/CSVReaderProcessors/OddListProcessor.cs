@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using WPFLeitorEnviador.Domain;
+using iBets.Core;
 using WPFLeitorEnviador.Services.CSVReaderProcessors;
 
 namespace WPFLeitorEnviador.Services

@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFLeitorEnviador", "WPFLeitorEnviador.csproj", "{F6A0BF15-686E-46DA-8698-4166C1B343DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFLeitorEnviador", "WPFLeitorEnviador.csproj", "{F6A0BF15-686E-46DA-8698-4166C1B343DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iBets.Core", "..\iBets.Core\iBets.Core.csproj", "{92BC2088-05CA-470C-A433-86E88A002038}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{F6A0BF15-686E-46DA-8698-4166C1B343DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6A0BF15-686E-46DA-8698-4166C1B343DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6A0BF15-686E-46DA-8698-4166C1B343DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92BC2088-05CA-470C-A433-86E88A002038}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92BC2088-05CA-470C-A433-86E88A002038}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92BC2088-05CA-470C-A433-86E88A002038}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92BC2088-05CA-470C-A433-86E88A002038}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
