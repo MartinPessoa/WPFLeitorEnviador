@@ -11,6 +11,9 @@
 
 
     <DockPanel Margin="10">
+        <ToolBarPanel DockPanel.Dock="Top">
+            <Button  Click="Button_Click">Simulação Aposta 4 Tiros</Button>
+        </ToolBarPanel>
         <GroupBox  Margin="10" DockPanel.Dock="Top" Header="ODDS:" >
             <Grid   Background="LightGray" >
 

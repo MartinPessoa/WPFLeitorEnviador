@@ -469,10 +469,17 @@ namespace WPFLeitorEnviador
             }
         }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var teste = new Teste4TirosWindow();
+            teste.Show();
+            teste.Activate();   
+        }
+
         //private void BtnTesteAppsScripts_Click(object sender, RoutedEventArgs e)
         //{
-         //   var enviadorPlanilhaService = new EnviadorPlanilhaService();
-         //   enviadorPlanilhaService.EnviarDadosResultadosAsync(null).Wait();
+        //   var enviadorPlanilhaService = new EnviadorPlanilhaService();
+        //   enviadorPlanilhaService.EnviarDadosResultadosAsync(null).Wait();
         //}
     }
 }

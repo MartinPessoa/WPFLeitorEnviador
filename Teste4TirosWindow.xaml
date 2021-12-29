@@ -1,0 +1,55 @@
+﻿<Window x:Class="WPFLeitorEnviador.Teste4TirosWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFLeitorEnviador"
+        mc:Ignorable="d"
+        Title="Teste4TirosWindow" Height="450" Width="800">
+
+    
+        <Grid DockPanel.Dock="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="25"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="25"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+        
+            <GroupBox Grid.Row="1" Grid.Column="1" Grid.RowSpan="3">
+            <StackPanel>
+                <Label>Stake Inicial:</Label>
+                <TextBox></TextBox>
+                <Label>Over 3.5:</Label>
+                <TextBox></TextBox>
+                <Label>5+:</Label>
+                <TextBox></TextBox>
+                <Separator Margin="10"></Separator>
+                <Label>Resultados:</Label>
+                <TextBox MinLines="10"></TextBox>
+                <Separator Margin="10"></Separator>
+                <Button x:Name="BtnSimular" Click="BtnSimular_Click">Simular</Button>
+            </StackPanel>
+
+            </GroupBox>
+            
+        
+        </Grid>
+        
+        
+    
+
+
+</Window>
