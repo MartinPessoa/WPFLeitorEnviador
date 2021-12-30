@@ -30,12 +30,10 @@
         
             <GroupBox Grid.Row="1" Grid.Column="1" Grid.RowSpan="3">
             <StackPanel>
-                <Label>Stake Inicial:</Label>
-                <TextBox></TextBox>
                 <Label>Over 3.5:</Label>
-                <TextBox></TextBox>
+                <TextBox x:Name="TextOver35"></TextBox>
                 <Label>5+:</Label>
-                <TextBox></TextBox>
+                <TextBox x:Name="TextCincoMais"></TextBox>
                 <Separator Margin="10"></Separator>
                 <Label>Resultados:</Label>
                 <TextBox MinLines="10"></TextBox>
@@ -44,9 +42,14 @@
             </StackPanel>
 
             </GroupBox>
-            
-        
-        </Grid>
+
+        <GroupBox Grid.Row="1" Grid.Column="2" Grid.RowSpan="3" Grid.ColumnSpan="4">
+            <ScrollViewer>
+            <TextBlock x:Name="DisplayTextResultados"></TextBlock>
+            </ScrollViewer>
+        </GroupBox>
+
+    </Grid>
         
         
     
