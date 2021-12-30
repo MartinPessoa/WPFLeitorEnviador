@@ -27,6 +27,7 @@
                 <ColumnDefinition Width="25"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
+        <Label x:Name="LblStatus" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="5"></Label>
         
             <GroupBox Grid.Row="1" Grid.Column="1" Grid.RowSpan="3">
             <StackPanel>
@@ -36,7 +37,18 @@
                 <TextBox x:Name="TextCincoMais"></TextBox>
                 <Separator Margin="10"></Separator>
                 <Label>Resultados:</Label>
-                <TextBox MinLines="10"></TextBox>
+                <ScrollViewer>
+                <TextBox 
+                    MaxLines="10" 
+                    MinLines="10" 
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Visible"
+                    x:Name="InputResultados" 
+                    
+                    ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"></TextBox>
+                </ScrollViewer>
                 <Separator Margin="10"></Separator>
                 <Button x:Name="BtnSimular" Click="BtnSimular_Click">Simular</Button>
             </StackPanel>
@@ -45,7 +57,12 @@
 
         <GroupBox Grid.Row="1" Grid.Column="2" Grid.RowSpan="3" Grid.ColumnSpan="4">
             <ScrollViewer>
-            <TextBlock x:Name="DisplayTextResultados"></TextBlock>
+                <TextBox
+                    IsReadOnly="True"
+                    TextWrapping="Wrap"
+                    x:Name="DisplayTextResultados" 
+                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled" ></TextBox>
             </ScrollViewer>
         </GroupBox>
 

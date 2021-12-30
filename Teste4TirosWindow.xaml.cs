@@ -28,38 +28,154 @@ namespace WPFLeitorEnviador
             InitializeComponent();
         }
 
-        private void BtnSimular_Click(object sender, RoutedEventArgs e)
+        private List<Resultado> Processar(string resultados)
         {
+            resultados = resultados.Trim();
+            resultados = resultados.Replace('	', ' ');
+            resultados = resultados.Replace('	', ' ');
+            resultados = resultados.Replace("\n", " ").Replace("\r", "");
+
+            List<Resultado> retorno = new List<Resultado>();
+            Resultado? resDaVez;
+
+            var splitted = resultados.Split(' ');
+
+            foreach (var token in splitted)
+            {
+                if (token == "" ) continue;
+
+                if(token == "5+") 
+                {
+                    resDaVez = new Resultado("TESTE", DateTime.Now, 6, 0);
+                    retorno.Add(resDaVez);
+                    continue;
+                }
+
+                var subsplit = token.Split('x');
+
+                resDaVez = GetResultadoFromStrings(subsplit[0], subsplit[1]);
+
+                if(resDaVez == null)
+                {
+                    DisplayTextResultados.Text += "Não foi possível ler o resultado: " + token + "\n";
+                } else
+                {
+                    retorno.Add(resDaVez);
+                }
+            }
+
+            return retorno;
+        }
+
+        private static Resultado? GetResultadoFromStrings(string golsCasa, string golsVisitante)
+        {
+            int gc = -1;
+            int gv = -1;
+
+
+            if (golsCasa == "5+")
+            {
+                gc = 6;
+            } else
+            {
+                if(!int.TryParse(golsCasa, out gc)) { return null; }
+            }
+
+            if (golsVisitante == "5+") 
+            {
+                gv = 6;
+            }
+            else
+            {
+                if (!int.TryParse(golsVisitante, out gv)) { return null; }
+            }
+
+
+            return new Resultado("TESTE", DateTime.Now, gc, gv);    
+        }
+
+        private async void BtnSimular_Click(object sender, RoutedEventArgs e)
+        {
+            if(InputResultados.Text == "") { return; }
+
+            
+
+            DisplayTextResultados.Text = "";
+
             var converteuCincoMais = decimal.TryParse(TextCincoMais.Text, out decimal valorInicialCincoMais);
             var converteuOver35 = decimal.TryParse(TextOver35.Text, out decimal valorInicialOver35);
+
+            ConfigsIniciasDeAposta.Configurar(30,valorInicialOver35, valorInicialCincoMais);
 
             var ListaAposta = new List<BaseAposta>();
             BaseAposta apostaDaVez;
 
+            var ListaResultados = Processar(InputResultados.Text);
 
             if(converteuCincoMais == false || converteuOver35 == false) { return; }
 
-            DisplayTextResultados.Text = "Iniciando...\n";
-
             apostaDaVez = ApostaTeste4Tiros.Primeira(valorInicialOver35, valorInicialCincoMais);
 
-            for (int i = 0;i<60;i++)
+            IProgress<string> informarParada = new Progress<string>(InformarStatus);
+            IProgress<string> informarAposta = new Progress<string>(InformarAposta);
+
+            await Task.Run(() =>
             {
-                apostaDaVez.InformarResultado(GetAleatório());
+                int i = 0;
+                int total = ListaResultados.Count();
 
-                DisplayTextResultados.Text += "\n*************************************\n";
+                decimal ganhos = 0;
+                decimal apostado = 0;
+                decimal totalAcumulado = 0;
 
-                DisplayTextResultados.Text += apostaDaVez.ToString();
+                foreach (var res in ListaResultados)
+                {
+                    i++;
+                    informarParada.Report($"Lendo {i} de {total}");
+                    apostaDaVez.InformarResultado(res);
 
-                ListaAposta.Add(apostaDaVez);
+                    informarAposta.Report("\n*************************************\n");
 
-                apostaDaVez = apostaDaVez.Proxima(valorInicialOver35, valorInicialCincoMais);
-            }
+                    informarAposta.Report(apostaDaVez.ToString());
 
+                    ListaAposta.Add(apostaDaVez);
+
+                    ganhos += apostaDaVez.CalcularGanhos();
+                    apostado += apostaDaVez.CalcularTotalApostado();
+                    totalAcumulado += apostaDaVez.CalcularAcumuladoNãoGanho();
+
+                    apostaDaVez = apostaDaVez.Proxima();
+
+
+
+                    //informarParada.Report("lendo")
+
+                }
+                informarParada.Report($"Total resultados lidos: {total}");
+
+                informarAposta.Report($"\n\n\n TOTAL GANHOS: {ganhos}\n TOTAL APOSTADO: {apostado}");
+
+
+                //foreach (var item in ListaResultados)
+                //{
+                    //ganhos += item.gan
+
+                //}
+
+            });
 
 
         }
 
+        private void InformarAposta(string aposta)
+        {
+            DisplayTextResultados.Text += aposta;
+        }
+
+        private void InformarStatus(string status)
+        {
+            LblStatus.Content = status;
+        }
         private Resultado GetAleatório()
         {
             List<Tuple<int, int>> gols = new()
@@ -71,9 +187,6 @@ namespace WPFLeitorEnviador
                 new Tuple<int, int>(3, 5),
                 new Tuple<int, int>(2, 10),
                 new Tuple<int, int>(1, 20),
-
-
-
             };
 
 
